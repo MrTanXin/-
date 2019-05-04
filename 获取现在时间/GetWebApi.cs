@@ -15,31 +15,48 @@ namespace 获取现在时间
 
         public GetWebApi(string url)
         {
-            content = Get(url);
+            try
+            {
+                content = Get(url);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+
         }
 
         private static string Get(string url)
         {
-            HttpWebRequest httpWebRequest = (HttpWebRequest)HttpWebRequest.Create(url);
-            using (HttpWebResponse webResponse = (HttpWebResponse)httpWebRequest.GetResponse())
+            try
             {
-                if (webResponse.StatusCode == HttpStatusCode.OK)
+                HttpWebRequest httpWebRequest = (HttpWebRequest)HttpWebRequest.Create(url);
+                using (HttpWebResponse webResponse = (HttpWebResponse)httpWebRequest.GetResponse())
                 {
-                    using (Stream stream = webResponse.GetResponseStream())
+                    if (webResponse.StatusCode == HttpStatusCode.OK)
                     {
-                        using (StreamReader sr = new StreamReader(stream))
+                        using (Stream stream = webResponse.GetResponseStream())
                         {
-                            string str = sr.ReadToEnd();
-                            return str;
+                            using (StreamReader sr = new StreamReader(stream))
+                            {
+                                string str = sr.ReadToEnd();
+                                return str;
+                            }
                         }
-                    }
 
-                }
-                else
-                {
-                    return webResponse.StatusCode.ToString();
+                    }
+                    else
+                    {
+                        return webResponse.StatusCode.ToString();
+                    }
                 }
             }
+            catch (WebException e)
+            {
+                throw e;
+            }
+            finally
+            { }
         }
     }
 
